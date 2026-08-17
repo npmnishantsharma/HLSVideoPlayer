@@ -50,6 +50,11 @@ type VideoInfo = {
   duration: number;
 };
 
+const STORYBOARD_INTERVAL_SECONDS = 10;
+const STORYBOARD_WIDTH = 160;
+const STORYBOARD_HEIGHT = 90;
+const STORYBOARD_COLUMNS = 5;
+
 async function getVideoInfo(input: string): Promise<VideoInfo> {
   const { stdout } = await execFileAsync("ffprobe", [
     "-v",
@@ -104,6 +109,61 @@ function getBandwidth(videoBitrate: string, audioBitrate: string) {
   const audio = Number.parseInt(audioBitrate);
 
   return (video + audio) * 1000;
+}
+
+function formatVttTimestamp(seconds: number) {
+  const wholeSeconds = Math.max(0, Math.floor(seconds));
+  const hours = Math.floor(wholeSeconds / 3600);
+  const minutes = Math.floor((wholeSeconds % 3600) / 60);
+  const secs = wholeSeconds % 60;
+
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}.000`;
+}
+
+async function createStoryboard(
+  input: string,
+  outputDir: string,
+  duration: number
+) {
+  const frameCount = Math.max(
+    1,
+    Math.ceil(duration / STORYBOARD_INTERVAL_SECONDS)
+  );
+  const columns = Math.min(STORYBOARD_COLUMNS, frameCount);
+  const rows = Math.ceil(frameCount / columns);
+  const spriteName = "storyboard.jpg";
+
+  await execFileAsync("ffmpeg", [
+    "-y",
+    "-i",
+    input,
+    "-vf",
+    `fps=1/${STORYBOARD_INTERVAL_SECONDS},scale=${STORYBOARD_WIDTH}:${STORYBOARD_HEIGHT},tile=${columns}x${rows}`,
+    "-frames:v",
+    "1",
+    path.join(outputDir, spriteName),
+  ]);
+
+  const cues = Array.from({ length: frameCount }, (_, index) => {
+    const start = index * STORYBOARD_INTERVAL_SECONDS;
+    const end = Math.min(
+      duration,
+      start + STORYBOARD_INTERVAL_SECONDS
+    );
+    const x = (index % columns) * STORYBOARD_WIDTH;
+    const y = Math.floor(index / columns) * STORYBOARD_HEIGHT;
+
+    return [
+      `${formatVttTimestamp(start)} --> ${formatVttTimestamp(end)}`,
+      `${spriteName}#xywh=${x},${y},${STORYBOARD_WIDTH},${STORYBOARD_HEIGHT}`,
+    ].join("\n");
+  });
+
+  await fs.writeFile(
+    path.join(outputDir, "storyboard.vtt"),
+    `WEBVTT\n\n${cues.join("\n\n")}\n`,
+    "utf8"
+  );
 }
 
 function createMasterPlaylist(
@@ -279,6 +339,12 @@ async function processVideo(input: string, videoId: string) {
     info.width,
     info.height,
     qualities
+  );
+
+  await createStoryboard(
+    input,
+    outputDir,
+    info.duration
   );
 
   console.log("\nHLS processing complete!");

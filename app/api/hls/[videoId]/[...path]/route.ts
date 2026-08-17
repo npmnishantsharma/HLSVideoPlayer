@@ -43,6 +43,10 @@ export async function GET(
       contentType = "application/vnd.apple.mpegurl";
     } else if (extension === ".ts") {
       contentType = "video/mp2t";
+    } else if (extension === ".vtt") {
+      contentType = "text/vtt; charset=utf-8";
+    } else if (extension === ".jpg" || extension === ".jpeg") {
+      contentType = "image/jpeg";
     }
 
     return new NextResponse(file, {

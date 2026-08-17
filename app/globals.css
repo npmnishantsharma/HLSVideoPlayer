@@ -1,26 +1,1019 @@
-@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200");
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+  --md-sys-color-primary: #d0bcff;
+  --md-sys-color-on-primary: #381e72;
+  --md-sys-color-primary-container: #4f378b;
+  --md-sys-color-on-primary-container: #eaddff;
+  --md-sys-color-secondary: #ccc2dc;
+  --md-sys-color-on-secondary: #332d41;
+  --md-sys-color-secondary-container: #4a4458;
+  --md-sys-color-on-secondary-container: #e8def8;
+  --md-sys-color-tertiary: #efb8c8;
+  --md-sys-color-on-tertiary: #492532;
+  --md-sys-color-tertiary-container: #633b48;
+  --md-sys-color-on-tertiary-container: #ffd8e4;
+  --md-sys-color-background: #141218;
+  --md-sys-color-on-background: #e6e0e9;
+  --md-sys-color-surface: #141218;
+  --md-sys-color-on-surface: #e6e0e9;
+  --md-sys-color-surface-container-low: #1d1b20;
+  --md-sys-color-surface-container: #211f26;
+  --md-sys-color-surface-container-high: #2b2930;
+  --md-sys-color-surface-container-highest: #36343b;
+  --md-sys-color-outline: #938f99;
+  --md-sys-color-outline-variant: #49454f;
+  --stream-radius-small: 12px;
+  --stream-radius-medium: 20px;
+  --stream-radius-large: 28px;
+  --stream-radius-extra-large: 32px;
+  --stream-motion-fast: 160ms;
+  --stream-motion-normal: 280ms;
+  --stream-motion-slow: 420ms;
+  --stream-easing:
+    cubic-bezier(0.2, 0, 0, 1);
+  --stream-font:
+    "Roboto",
+    "Google Sans",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
+  font-family: var(--stream-font);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+::selection {
+  background: var(--md-sys-color-primary-container);
+
+  color: var(--md-sys-color-on-primary-container);
+}
+md-icon {
+  font-family: "Material Symbols Rounded";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings:
+    "liga";
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings:
+    "liga";
+}
+.stream-player {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+
+  background: transparent;
+  border-radius: 24px;
+
+  overflow: visible;
+  isolation: isolate;
+
+  --player-primary: #ff80ab;
+  --player-primary-container: #7d2949;
+  --player-on-primary: #ffd9e2;
+  --player-glow: rgba(255, 128, 171, 0.65);
+  --player-ambient: rgba(255, 128, 171, 0.65);
+}
+
+.stream-player>video {
+  position: relative;
+
+  z-index: 2;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  background: #000;
+
+  border-radius: inherit;
+}
+
+/* =========================================
+   AMBIENT MODE
+   ========================================= */
+.stream-player--ambient {
+  overflow: visible;
+}
+
+.stream-player--ambient::before {
+  content: "";
+
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+
+  left: -0.5%;
+  right: -0.5%;
+  top: -1%;
+  bottom: -1%;
+
+  border-radius: 28px;
+
+  background:
+    radial-gradient(ellipse at top,
+      var(--ambient-top),
+      transparent 70%),
+    radial-gradient(ellipse at right,
+      var(--ambient-right),
+      transparent 70%),
+    radial-gradient(ellipse at bottom,
+      var(--ambient-bottom),
+      transparent 70%),
+    radial-gradient(ellipse at left,
+      var(--ambient-left),
+      transparent 70%);
+
+  filter: blur(22px);
+
+  opacity: 0.30;
+
+  transform: scale(1.015);
+
+  transition:
+    background 700ms ease,
+    opacity 700ms ease;
+}
+
+.stream-player--ambient::after {
+  content: "";
+
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+
+  left: -4%;
+  right: -4%;
+  top: -5%;
+  bottom: -5%;
+
+  border-radius: 32px;
+
+  background:
+    radial-gradient(ellipse at top,
+      var(--ambient-top),
+      transparent 72%),
+    radial-gradient(ellipse at right,
+      var(--ambient-right),
+      transparent 72%),
+    radial-gradient(ellipse at bottom,
+      var(--ambient-bottom),
+      transparent 72%),
+    radial-gradient(ellipse at left,
+      var(--ambient-left),
+      transparent 72%);
+
+  filter: blur(45px);
+
+  opacity: 0.16;
+
+  transform: scale(1.01);
+
+  transition:
+    background 900ms ease,
+    opacity 900ms ease;
+}
+
+.stream-player--ambient>video {
+  position: relative;
+  z-index: 2;
+}
+
+.stream-player--ambient .stream-player__overlay {
+  z-index: 20;
+}
+
+
+/*
+ * Keep loading/error/quality UI above glow.
+ */
+
+.stream-player--ambient .stream-player__loading {
+  z-index: 30;
+}
+
+.stream-player--ambient .stream-player__error {
+  z-index: 50;
+}
+
+.stream-player--ambient .stream-player__quality-label {
+  z-index: 30;
+}
+
+.stream-player--ambient .stream-player__center-play {
+  z-index: 30;
+}
+
+.stream-player__overlay {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 10;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: flex-end;
+
+  pointer-events: none;
+
+  /* Keep the controls gradient inside the rounded video corners. */
+  border-radius: inherit;
+
+  background:
+    linear-gradient(to top,
+      rgba(0, 0, 0, 0.9) 0%,
+      rgba(0, 0, 0, 0.55) 12%,
+      rgba(0, 0, 0, 0.15) 30%,
+      transparent 55%);
+}
+
+.stream-player__controls {
+  position: relative;
+
+  display: flex;
+
+  align-items: center;
+
+  width: 100%;
+
+  min-height: 52px;
+
+  padding: 4px 12px 10px;
+
+  gap: 4px;
+
+  pointer-events: auto;
+}
+
+.stream-player__sound-controls {
+  display: flex;
+
+  align-items: center;
+}
+
+.stream-player__volume-control {
+  display: flex;
+
+  align-items: center;
+
+  flex-basis: 0;
+
+  width: 0;
+
+  overflow: hidden;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition:
+    flex-basis var(--stream-motion-fast) ease,
+    width var(--stream-motion-fast) ease,
+    opacity var(--stream-motion-fast) ease;
+}
+
+.stream-player__sound-controls--expanded
+  .stream-player__volume-control {
+  flex-basis: 120px;
+
+  width: 120px;
+
+  opacity: 1;
+
+  pointer-events: auto;
+}
+
+.stream-player__volume-slider {
+  width: 100%;
+
+  /* Material's default 200px minimum escapes its control slot. */
+  min-inline-size: 0;
+}
+
+.stream-player__progress {
+  position: absolute;
+
+  left: 10px;
+  right: 10px;
+
+  bottom: 54px;
+
+  height: 5px;
+
+  z-index: 20;
+
+  border-radius: 999px;
+
+  overflow: visible;
+
+  pointer-events: none;
+}
+
+/* =========================================
+   BUFFER TRACK
+   White translucent progress
+   ========================================= */
+
+.stream-player__buffer-progress {
+  position: absolute !important;
+
+  inset: 0 !important;
+
+  width: 100% !important;
+  height: 5px !important;
+
+  --md-linear-progress-track-height: 5px;
+  --md-linear-progress-active-indicator-height: 5px;
+
+  --md-linear-progress-track-color:
+    rgba(255, 255, 255, 0.20);
+
+  --md-linear-progress-active-indicator-color:
+    rgba(255, 255, 255, 0.72);
+
+  border-radius: 999px;
+
+  overflow: hidden;
+
+  z-index: 1;
+}
+
+/* =========================================
+   CURRENT PLAYBACK
+   Pink progress
+   ========================================= */
+
+.stream-player__current-progress {
+  position: absolute !important;
+
+  inset: 0 !important;
+
+  width: 100% !important;
+  height: 5px !important;
+
+  --md-linear-progress-track-height: 5px;
+  --md-linear-progress-active-indicator-height: 5px;
+
+  --md-linear-progress-track-color:
+    transparent;
+
+  --md-linear-progress-active-indicator-color:
+    var(--player-primary);
+
+  border-radius: 999px;
+
+  overflow: hidden;
+
+  z-index: 2;
+}
+
+.stream-player__progress-hitbox {
+  position: absolute;
+
+  left: -5px;
+  right: -5px;
+
+  top: -12px;
+  bottom: -12px;
+
+  z-index: 10;
+
+  pointer-events: auto;
+
+  cursor: pointer;
+}
+
+.stream-player__progress-hitbox:focus-visible {
+  outline: 2px solid var(--player-primary);
+  outline-offset: 6px;
+  border-radius: 999px;
+}
+
+/* =========================================
+   BOOKMARK MARKERS
+   ========================================= */
+
+.stream-player__bookmark-marker {
+  position: absolute;
+  z-index: 12;
+
+  bottom: -3px;
+
+  width: 4px;
+  height: 11px;
+
+  padding: 0;
+
+  background: var(--player-on-primary);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.42);
+
+  cursor: pointer;
+
+  transform: translateX(-50%);
+
+  transition:
+    height var(--stream-motion-fast) ease,
+    background var(--stream-motion-fast) ease;
+}
+
+.stream-player__bookmark-marker:hover,
+.stream-player__bookmark-marker:focus-visible {
+  height: 15px;
+
+  background: var(--player-primary);
+
+  outline: none;
+}
+
+.stream-player__bookmark-marker::after {
+  content: attr(data-tooltip);
+
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+
+  width: max-content;
+  max-width: min(240px, 65vw);
+
+  padding: 6px 8px;
+
+  overflow: hidden;
+
+  color: white;
+  background: rgba(12, 12, 12, 0.96);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.36);
+
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  opacity: 0;
+
+  transform: translateX(-50%) translateY(4px);
+  transition:
+    opacity var(--stream-motion-fast) ease,
+    transform var(--stream-motion-fast) ease;
+
+  pointer-events: none;
+}
+
+.stream-player__bookmark-marker:hover::after,
+.stream-player__bookmark-marker:focus-visible::after {
+  opacity: 1;
+
+  transform: translateX(-50%) translateY(0);
+}
+
+/* =========================================
+   BOOKMARK DIALOG
+   ========================================= */
+
+.stream-player__bookmark-dialog-backdrop {
+  position: absolute;
+  z-index: 80;
+
+  inset: 0;
+
+  display: grid;
+  place-items: center;
+
+  padding: 20px;
+
+  background: rgba(0, 0, 0, 0.58);
+  border-radius: inherit;
+  backdrop-filter: blur(5px);
+}
+
+.stream-player__bookmark-dialog {
+  width: min(100%, 360px);
+
+  padding: 24px;
+
+  color: var(--player-on-primary);
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--player-primary-container) 82%, #151218),
+      #1b181d
+    );
+  border: 1px solid color-mix(in srgb, var(--player-primary) 58%, transparent);
+  border-radius: 20px;
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.48),
+    0 0 28px var(--player-glow);
+}
+
+.stream-player__bookmark-dialog-icon {
+  display: grid;
+  place-items: center;
+
+  width: 42px;
+  height: 42px;
+
+  color: var(--player-on-primary);
+  background: var(--player-primary);
+  border-radius: 14px;
+}
+
+.stream-player__bookmark-dialog h2 {
+  margin: 16px 0 6px;
+
+  color: white;
+
+  font-size: 21px;
+  line-height: 1.2;
+}
+
+.stream-player__bookmark-dialog p {
+  margin: 0 0 18px;
+
+  color: rgba(255, 255, 255, 0.74);
+
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.stream-player__bookmark-dialog label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: white;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.stream-player__bookmark-dialog input {
+  width: 100%;
+
+  padding: 11px 12px;
+
+  color: white;
+  background: rgba(0, 0, 0, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 10px;
+
+  outline: none;
+}
+
+.stream-player__bookmark-dialog input:focus {
+  border-color: var(--player-primary);
+  box-shadow: 0 0 0 3px var(--player-glow);
+}
+
+.stream-player__bookmark-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  margin-top: 20px;
+
+  gap: 8px;
+}
+
+.stream-player__bookmark-dialog-actions button {
+  padding: 9px 14px;
+
+  color: white;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 999px;
+
+  cursor: pointer;
+}
+
+.stream-player__bookmark-dialog-actions button[type="submit"] {
+  color: var(--player-on-primary);
+  background: var(--player-primary);
+  border-color: var(--player-primary);
+}
+
+.stream-player__bookmark-dialog-actions button:hover {
+  filter: brightness(1.1);
+}
+
+/* =========================================
+   STORYBOARD SCRUB PREVIEW
+   ========================================= */
+
+.stream-player__scrub-preview {
+  position: absolute;
+  z-index: 15;
+
+  bottom: 16px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  overflow: hidden;
+
+  min-width: 160px;
+
+  color: white;
+
+  background: rgba(13, 13, 13, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+
+  transform: translateX(-50%);
+
+  pointer-events: none;
+}
+
+.stream-player__scrub-image {
+  flex: 0 0 auto;
+
+  background-repeat: no-repeat;
+}
+
+.stream-player__scrub-preview span {
+  padding: 4px 8px 5px;
+
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.stream-player__loading {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 20;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  pointer-events: none;
+}
+
+.stream-player md-icon-button {
+  --md-icon-button-icon-color:
+    rgba(255, 255, 255, 0.95);
+
+  --md-icon-button-hover-icon-color:
+    var(--player-primary);
+
+  --md-icon-button-pressed-icon-color:
+    var(--player-primary);
+
+  --md-icon-button-focus-icon-color:
+    var(--player-primary);
+}
+
+.stream-player md-icon {
+  color: white;
+}
+
+.stream-player__error {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 30;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0, 0, 0, 0.8);
+
+  border-radius: inherit;
+}
+
+.stream-player__center-play {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  z-index: 20;
+
+  pointer-events: auto;
+}
+
+.stream-player__center-play md-icon-button {
+  width: 72px;
+  height: 72px;
+
+  --md-icon-button-icon-color:
+    white;
+
+  --md-icon-button-hover-icon-color:
+    var(--player-primary);
+}
+
+.stream-player--viewport-fit {
+  width: min(100%,
+      calc((100dvh - 96px) * 16 / 9));
+
+  max-height: calc(100dvh - 96px);
+
+  aspect-ratio: 16 / 9;
+
+  margin-inline: auto;
+}
+
+.stream-player__quality-label {
+  position: absolute;
+
+  top: 16px;
+  right: 16px;
+
+  z-index: 10;
+
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  color: white;
+
+  background: rgba(0, 0, 0, 0.55);
+
+  backdrop-filter: blur(12px);
+
+  font-size: 12px;
+}
+
+.stream-player__time {
+  color: white;
+
+  white-space: nowrap;
+
+  font-size: 13px;
+
+  font-variant-numeric: tabular-nums;
+
+  flex: 0 0 auto;
+}
+
+.stream-player__spacer {
+  flex: 1;
+}
+
+/* =========================
+   Loading
+   ========================= */
+
+.stream-player__loading {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 10;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  pointer-events: none;
+}
+
+.stream-player__loading md-circular-progress {
+  --md-circular-progress-active-indicator-color:
+    var(--md-sys-color-primary);
+
+  width: 48px;
+  height: 48px;
+}
+
+/* =========================
+   Error
+   ========================= */
+
+.stream-player__error {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 20;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 24px;
+
+  background:
+    rgba(0, 0, 0, 0.78);
+
+  text-align: center;
+
+  border-radius: inherit;
+}
+
+.stream-player__error-card {
+  max-width: 420px;
+
+  padding: 28px;
+
+  border-radius:
+    var(--stream-radius-large);
+
+  background:
+    var(--md-sys-color-surface-container);
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+
+/* =========================
+   Playback status badges
+   ========================= */
+
+.stream-player__status-labels {
+  position: absolute;
+
+  top: 18px;
+  right: 18px;
+
+  z-index: 30;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  pointer-events: none;
+}
+
+.stream-player__quality-label,
+.stream-player__network-speed-label {
+  position: static;
+
+  padding:
+    6px 12px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(0, 0, 0, 0.55);
+
+  color: white;
+
+  font-size: 12px;
+
+  font-variant-numeric: tabular-nums;
+
+  backdrop-filter: blur(12px);
+}
+
+/* =========================
+   Video metrics
+   ========================= */
+
+.stream-player__metrics {
+  position: absolute;
+
+  top: 18px;
+  left: 18px;
+
+  z-index: 30;
+
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 4px 16px;
+
+  min-width: 190px;
+
+  padding: 10px 12px;
+
+  color: white;
+
+  background: rgba(0, 0, 0, 0.68);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  backdrop-filter: blur(12px);
+
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.35;
+
+  pointer-events: none;
+}
+
+.stream-player__metrics div {
+  display: contents;
+}
+
+.stream-player__metrics span {
+  opacity: 0.72;
+}
+
+.stream-player__metrics strong {
+  text-align: right;
+  font-weight: 600;
+}
+
+/* =========================
+   Responsive
+   ========================= */
+
+@media (max-width: 600px) {
+  .stream-player {
+    border-radius:
+      var(--stream-radius-medium);
+  }
+
+  .stream-player__controls {
+    padding:
+      0 8px 10px;
+
+    gap: 2px;
+  }
+
+  .stream-player__progress {
+    left: 10px;
+    right: 10px;
+    bottom: 55px;
+  }
+
+  .stream-player__time {
+    font-size: 11px;
+  }
+
+  .stream-player__metrics {
+    top: 12px;
+    left: 12px;
+
+    min-width: 172px;
+
+    padding: 8px 10px;
+
+    font-size: 11px;
+  }
+
+  .stream-player__sound-controls--expanded
+    .stream-player__volume-control {
+    flex-basis: 80px;
+
+    width: 80px;
+  }
+
+  .stream-player__scrub-preview {
+    bottom: 14px;
+  }
+}
+
+@media (max-width: 440px) {
+  .stream-player__volume-control {
+    display: none;
+  }
 }
