@@ -72,6 +72,7 @@ declare module "react" {
         headline?: string;
         supportingText?: string;
         "keep-open"?: boolean;
+        disabled?: boolean;
       };
     }
   }
