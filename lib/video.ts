@@ -59,3 +59,11 @@ export function getMaxQuality(sourceHeight: number) {
 
   return available[available.length - 1];
 }
+
+export type DrmSecurityLevel = "L1" | "L3" | "auto";
+
+export type WidevineDrmConfig = {
+  widevineLicenseUrl: string;
+  widevineServerCertificateUrl?: string;
+  level?: DrmSecurityLevel;
+};

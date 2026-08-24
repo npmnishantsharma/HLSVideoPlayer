@@ -9,9 +9,12 @@ import {
 
 import Hls from "hls.js";
 
+import type { WidevineDrmConfig, DrmSecurityLevel } from "@/lib/video";
+
 type VideoPlayerProps = {
   src: string;
   storyboardSrc?: string;
+  drm?: WidevineDrmConfig;
 };
 
 type StoryboardCue = {
@@ -358,6 +361,7 @@ const PLAYER_THEMES: Record<
 export default function VideoPlayer({
   src,
   storyboardSrc = src.replace(/master\.m3u8(?:\?.*)?$/, "storyboard.vtt"),
+  drm,
 }: VideoPlayerProps) {
   /*
    * =========================================
@@ -1224,13 +1228,37 @@ export default function VideoPlayer({
         "CREATING HLS INSTANCE"
       );
 
-      const hls = new Hls({
+      const hlsConfig: Record<string, unknown> = {
         enableWorker: true,
-
         maxBufferLength: 30,
-
         capLevelToPlayerSize: false,
-      });
+      };
+
+      if (drm?.widevineLicenseUrl) {
+        const level: DrmSecurityLevel = drm.level ?? "auto";
+        let videoRobustness = "";
+
+        if (level === "L1") {
+          videoRobustness = "HW_SECURE_ALL";
+        } else if (level === "L3") {
+          videoRobustness = "SW_SECURE_DECRYPTION";
+        }
+
+        hlsConfig.drmSystems = {
+          "com.widevine.alpha": {
+            licenseUrl: drm.widevineLicenseUrl,
+            serverCertificateUrl: drm.widevineServerCertificateUrl,
+          },
+        };
+
+        if (videoRobustness) {
+          hlsConfig.drmSystemOptions = {
+            videoRobustness,
+          };
+        }
+      }
+
+      const hls = new Hls(hlsConfig);
 
       hlsRef.current = hls;
 
@@ -1604,7 +1632,7 @@ export default function VideoPlayer({
     );
 
     setLoading(false);
-  }, [src]);
+  }, [src, drm]);
 
   /*
    * =========================================
