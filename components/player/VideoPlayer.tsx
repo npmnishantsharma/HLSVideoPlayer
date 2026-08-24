@@ -389,9 +389,6 @@ export default function VideoPlayer({
   const volumeControlHideTimerRef =
     useRef<number | null>(null);
 
-  const storyboardRequestIdRef =
-    useRef(0);
-
   /*
    * =========================================
    * PLAYBACK STATE
@@ -1108,8 +1105,7 @@ export default function VideoPlayer({
    */
 
   useEffect(() => {
-    const requestId =
-      ++storyboardRequestIdRef.current;
+    let cancelled = false;
 
     fetch(storyboardSrc)
       .then((response) => {
@@ -1120,10 +1116,7 @@ export default function VideoPlayer({
         return response.text();
       })
       .then((vtt) => {
-        if (
-          requestId !==
-          storyboardRequestIdRef.current
-        ) {
+        if (cancelled) {
           return;
         }
 
@@ -1133,10 +1126,7 @@ export default function VideoPlayer({
         );
       })
       .catch(() => {
-        if (
-          requestId !==
-          storyboardRequestIdRef.current
-        ) {
+        if (cancelled) {
           return;
         }
 
@@ -1146,12 +1136,7 @@ export default function VideoPlayer({
       });
 
     return () => {
-      if (
-        storyboardRequestIdRef.current ===
-        requestId
-      ) {
-        storyboardRequestIdRef.current++;
-      }
+      cancelled = true;
     };
   }, [storyboardSrc]);
 
@@ -1518,9 +1503,29 @@ export default function VideoPlayer({
           console.groupEnd();
 
           if (data.fatal) {
-            setError(
-              `HLS error: ${data.details}`
-            );
+            switch (data.type) {
+              case Hls.ErrorTypes.NETWORK_ERROR:
+                console.log(
+                  "Fatal network error encountered, attempting to recover..."
+                );
+                hls.startLoad();
+                break;
+              case Hls.ErrorTypes.MEDIA_ERROR:
+                console.log(
+                  "Fatal media error encountered, attempting to recover..."
+                );
+                hls.recoverMediaError();
+                break;
+              default:
+                console.log(
+                  "Unrecoverable error encountered"
+                );
+                setError(
+                  `HLS error: ${data.details}`
+                );
+                hls.destroy();
+                break;
+            }
           }
         }
       );
@@ -1875,7 +1880,7 @@ export default function VideoPlayer({
         handleInput
       );
     };
-  });
+  }, []);
 
   /*
    * =========================================
@@ -1891,13 +1896,6 @@ export default function VideoPlayer({
 
   useEffect(() => {
     if (!ambientMode) {
-      setAmbientColors({
-        top: activeTheme.glow,
-        right: activeTheme.glow,
-        bottom: activeTheme.glow,
-        left: activeTheme.glow,
-      });
-
       if (
         ambientAnimationRef.current !==
         null
@@ -3320,7 +3318,7 @@ export default function VideoPlayer({
                   </md-menu-item>
 
                   {bookmarks.length === 0 && (
-                    <md-menu-item disabled>
+                    <md-menu-item>
                       <md-icon slot="start">
                         bookmark_border
                       </md-icon>
