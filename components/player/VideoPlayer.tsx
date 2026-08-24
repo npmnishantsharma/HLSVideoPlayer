@@ -1185,6 +1185,8 @@ export default function VideoPlayer({
           videoRobustness = "SW_SECURE_DECRYPTION";
         }
 
+        hlsConfig.emeEnabled = true;
+        hlsConfig.widevineLicenseUrl = drm.widevineLicenseUrl;
         hlsConfig.drmSystems = {
           "com.widevine.alpha": {
             licenseUrl: drm.widevineLicenseUrl,
