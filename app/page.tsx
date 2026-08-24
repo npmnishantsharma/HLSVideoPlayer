@@ -11,6 +11,11 @@ export default function TestPlayerPage() {
       }}
     >      <VideoPlayer
         src="/api/stream/test-720/master.m3u8"
+        drm={{
+          widevineLicenseUrl:"https://cwip-shaka.widevine.com/proxy",
+          widevineServerCertificateUrl:"https://cwip-shaka.widevine.com/cert/sample_cert.bin",
+          level:"L1"
+        }}
       />
     </main>
   );

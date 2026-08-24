@@ -662,10 +662,6 @@ export default function VideoPlayer({
 
     if (video.paused) {
       video.play().catch((playError) => {
-        console.error(
-          "Play failed:",
-          playError
-        );
       });
     } else {
       video.pause();
@@ -893,9 +889,6 @@ export default function VideoPlayer({
     const hls = hlsRef.current;
 
     if (!hls) {
-      console.warn(
-        "hls.js is not active"
-      );
 
       return;
     }
@@ -905,9 +898,7 @@ export default function VideoPlayer({
      */
 
     if (qualityIndex === -1) {
-      console.log(
-        "Switching to AUTO quality"
-      );
+      
 
       hls.currentLevel = -1;
 
@@ -928,19 +919,11 @@ export default function VideoPlayer({
       hls.levels[qualityIndex];
 
     if (!level) {
-      console.warn(
-        "Invalid HLS quality index:",
-        qualityIndex
-      );
 
       return;
     }
 
-    console.log(
-      "Requested quality:",
-      level.height,
-      "p"
-    );
+    
 
     hls.nextLevel = qualityIndex;
 
@@ -1001,10 +984,6 @@ export default function VideoPlayer({
           await document.exitFullscreen();
         }
       } catch (fullscreenError) {
-        console.error(
-          "Fullscreen failed:",
-          fullscreenError
-        );
       }
     };
 
@@ -1032,10 +1011,6 @@ export default function VideoPlayer({
         await video.requestPictureInPicture();
       }
     } catch (pipError) {
-      console.error(
-        "Picture-in-picture failed:",
-        pipError
-      );
     }
   };
 
@@ -1135,7 +1110,6 @@ export default function VideoPlayer({
         }
 
         // Storyboards are progressive enhancement; playback still works without one.
-        console.info("Storyboard preview unavailable");
         setStoryboardCues([]);
       });
 
@@ -1157,34 +1131,7 @@ export default function VideoPlayer({
       return;
     }
 
-    console.log(
-      "================================"
-    );
-
-    console.log(
-      "VIDEO PLAYER INITIALIZED"
-    );
-
-    console.log(
-      "HLS URL:",
-      src
-    );
-
-    console.log(
-      "Hls.isSupported():",
-      Hls.isSupported()
-    );
-
-    console.log(
-      "Native HLS:",
-      video.canPlayType(
-        "application/vnd.apple.mpegurl"
-      )
-    );
-
-    console.log(
-      "================================"
-    );
+   
 
     setLoading(true);
     setError(null);
@@ -1208,9 +1155,6 @@ export default function VideoPlayer({
      */
 
     if (hlsRef.current) {
-      console.log(
-        "Destroying previous HLS instance"
-      );
 
       hlsRef.current.destroy();
 
@@ -1224,9 +1168,6 @@ export default function VideoPlayer({
      */
 
     if (Hls.isSupported()) {
-      console.log(
-        "CREATING HLS INSTANCE"
-      );
 
       const hlsConfig: Record<string, unknown> = {
         enableWorker: true,
@@ -1258,7 +1199,13 @@ export default function VideoPlayer({
         }
       }
 
+      console.log(
+        "Initializing hls.js with config:",
+        hlsConfig
+      );
+
       const hls = new Hls(hlsConfig);
+      
 
       hlsRef.current = hls;
 
@@ -1268,11 +1215,7 @@ export default function VideoPlayer({
 
       hls.on(
         Hls.Events.MEDIA_ATTACHED,
-        () => {
-          console.log(
-            "HLS MEDIA ATTACHED"
-          );
-        }
+        () => {}
       );
 
       /*
@@ -1281,12 +1224,7 @@ export default function VideoPlayer({
 
       hls.on(
         Hls.Events.MANIFEST_LOADING,
-        (_event, data) => {
-          console.log(
-            "HLS MANIFEST LOADING:",
-            data.url
-          );
-        }
+        (_event, data) => {}
       );
 
       /*
@@ -1296,10 +1234,7 @@ export default function VideoPlayer({
       hls.on(
         Hls.Events.MANIFEST_LOADED,
         (_event, data) => {
-          console.log(
-            "HLS MANIFEST LOADED:",
-            data
-          );
+          
         }
       );
 
@@ -1310,14 +1245,9 @@ export default function VideoPlayer({
       hls.on(
         Hls.Events.MANIFEST_PARSED,
         (_event, data) => {
-          console.log(
-            "HLS MANIFEST PARSED"
-          );
+         
 
-          console.log(
-            "Number of HLS levels:",
-            data.levels.length
-          );
+         
 
           const levels =
             data.levels
@@ -1340,9 +1270,6 @@ export default function VideoPlayer({
                   level.height > 0
               );
 
-          console.table(
-            levels
-          );
 
           setQualities(levels);
 
@@ -1361,10 +1288,7 @@ export default function VideoPlayer({
       hls.on(
         Hls.Events.LEVEL_LOADED,
         (_event, data) => {
-          console.log(
-            "HLS LEVEL LOADED:",
-            data.level
-          );
+         
         }
       );
 
@@ -1381,11 +1305,7 @@ export default function VideoPlayer({
             ];
 
           if (level) {
-            console.log(
-              "Switching to:",
-              level.height,
-              "p"
-            );
+            
 
             setCurrentHeight(
               level.height
@@ -1407,11 +1327,7 @@ export default function VideoPlayer({
             ];
 
           if (level) {
-            console.log(
-              "Active quality:",
-              level.height,
-              "p"
-            );
+            
 
             setCurrentHeight(
               level.height
@@ -1427,15 +1343,7 @@ export default function VideoPlayer({
       hls.on(
         Hls.Events.FRAG_LOADING,
         (_event, data) => {
-          console.log(
-            "FRAGMENT LOADING:",
-            {
-              level:
-                data.frag.level,
-              sn: data.frag.sn,
-              url: data.frag.url,
-            }
-          );
+          
         }
       );
 
@@ -1459,15 +1367,7 @@ export default function VideoPlayer({
             );
           }
 
-          console.log(
-            "FRAGMENT LOADED:",
-            {
-              level:
-                data.frag.level,
-              sn: data.frag.sn,
-              url: data.frag.url,
-            }
-          );
+          
         }
       );
 
@@ -1489,65 +1389,20 @@ export default function VideoPlayer({
       hls.on(
         Hls.Events.ERROR,
         (_event, data) => {
-          console.group(
-            "HLS ERROR"
-          );
-
-          console.log(
-            "Type:",
-            data.type
-          );
-
-          console.log(
-            "Details:",
-            data.details
-          );
-
-          console.log(
-            "Fatal:",
-            data.fatal
-          );
-
-          console.log(
-            "URL:",
-            data.url
-          );
-
-          console.log(
-            "Response:",
-            data.response
-          );
-
-          console.log(
-            "Error:",
-            data.error
-          );
-
-          console.log(
-            "Full error object:",
-            data
-          );
-
-          console.groupEnd();
+         
 
           if (data.fatal) {
             switch (data.type) {
               case Hls.ErrorTypes.NETWORK_ERROR:
-                console.log(
-                  "Fatal network error encountered, attempting to recover..."
-                );
+                
                 hls.startLoad();
                 break;
               case Hls.ErrorTypes.MEDIA_ERROR:
-                console.log(
-                  "Fatal media error encountered, attempting to recover..."
-                );
+                
                 hls.recoverMediaError();
                 break;
               default:
-                console.log(
-                  "Unrecoverable error encountered"
-                );
+               
                 setError(
                   `HLS error: ${data.details}`
                 );
@@ -1575,9 +1430,7 @@ export default function VideoPlayer({
        */
 
       return () => {
-        console.log(
-          "Destroying HLS instance"
-        );
+        
 
         hls.destroy();
 
@@ -1600,9 +1453,7 @@ export default function VideoPlayer({
         "application/vnd.apple.mpegurl"
       )
     ) {
-      console.log(
-        "Using native HLS playback"
-      );
+      
 
       video.src = src;
 
@@ -1623,9 +1474,6 @@ export default function VideoPlayer({
      * =====================================
      */
 
-    console.error(
-      "HLS is not supported."
-    );
 
     setError(
       "HLS is not supported by this browser."
@@ -1685,9 +1533,7 @@ export default function VideoPlayer({
 
     const handleMetadata =
       () => {
-        console.log(
-          "VIDEO METADATA LOADED"
-        );
+      
 
         setDuration(
           video.duration
@@ -1703,17 +1549,12 @@ export default function VideoPlayer({
     };
 
     const handleWaiting = () => {
-      console.log(
-        "VIDEO BUFFERING"
-      );
-
+      
       setLoading(true);
     };
 
     const handlePlaying = () => {
-      console.log(
-        "VIDEO PLAYING"
-      );
+      
 
       setLoading(false);
     };
@@ -3415,11 +3256,6 @@ export default function VideoPlayer({
                 picture_in_picture_alt
               </md-icon>
             </md-icon-button>
-
-            {/* =================================
-                FULLSCREEN
-                ================================= */}
-
             <md-icon-button
               aria-label="Fullscreen"
               onClick={
