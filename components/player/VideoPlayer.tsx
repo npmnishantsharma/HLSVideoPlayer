@@ -9,9 +9,12 @@ import {
 
 import Hls from "hls.js";
 
+import type { WidevineDrmConfig, DrmSecurityLevel } from "@/lib/video";
+
 type VideoPlayerProps = {
   src: string;
   storyboardSrc?: string;
+  drm?: WidevineDrmConfig;
 };
 
 type StoryboardCue = {
@@ -358,6 +361,7 @@ const PLAYER_THEMES: Record<
 export default function VideoPlayer({
   src,
   storyboardSrc = src.replace(/master\.m3u8(?:\?.*)?$/, "storyboard.vtt"),
+  drm,
 }: VideoPlayerProps) {
   /*
    * =========================================
@@ -388,9 +392,6 @@ export default function VideoPlayer({
 
   const volumeControlHideTimerRef =
     useRef<number | null>(null);
-
-  const storyboardRequestIdRef =
-    useRef(0);
 
   /*
    * =========================================
@@ -1108,8 +1109,7 @@ export default function VideoPlayer({
    */
 
   useEffect(() => {
-    const requestId =
-      ++storyboardRequestIdRef.current;
+    let cancelled = false;
 
     fetch(storyboardSrc)
       .then((response) => {
@@ -1120,10 +1120,7 @@ export default function VideoPlayer({
         return response.text();
       })
       .then((vtt) => {
-        if (
-          requestId !==
-          storyboardRequestIdRef.current
-        ) {
+        if (cancelled) {
           return;
         }
 
@@ -1133,10 +1130,7 @@ export default function VideoPlayer({
         );
       })
       .catch(() => {
-        if (
-          requestId !==
-          storyboardRequestIdRef.current
-        ) {
+        if (cancelled) {
           return;
         }
 
@@ -1146,12 +1140,7 @@ export default function VideoPlayer({
       });
 
     return () => {
-      if (
-        storyboardRequestIdRef.current ===
-        requestId
-      ) {
-        storyboardRequestIdRef.current++;
-      }
+      cancelled = true;
     };
   }, [storyboardSrc]);
 
@@ -1239,13 +1228,37 @@ export default function VideoPlayer({
         "CREATING HLS INSTANCE"
       );
 
-      const hls = new Hls({
+      const hlsConfig: Record<string, unknown> = {
         enableWorker: true,
-
         maxBufferLength: 30,
-
         capLevelToPlayerSize: false,
-      });
+      };
+
+      if (drm?.widevineLicenseUrl) {
+        const level: DrmSecurityLevel = drm.level ?? "auto";
+        let videoRobustness = "";
+
+        if (level === "L1") {
+          videoRobustness = "HW_SECURE_ALL";
+        } else if (level === "L3") {
+          videoRobustness = "SW_SECURE_DECRYPTION";
+        }
+
+        hlsConfig.drmSystems = {
+          "com.widevine.alpha": {
+            licenseUrl: drm.widevineLicenseUrl,
+            serverCertificateUrl: drm.widevineServerCertificateUrl,
+          },
+        };
+
+        if (videoRobustness) {
+          hlsConfig.drmSystemOptions = {
+            videoRobustness,
+          };
+        }
+      }
+
+      const hls = new Hls(hlsConfig);
 
       hlsRef.current = hls;
 
@@ -1518,9 +1531,29 @@ export default function VideoPlayer({
           console.groupEnd();
 
           if (data.fatal) {
-            setError(
-              `HLS error: ${data.details}`
-            );
+            switch (data.type) {
+              case Hls.ErrorTypes.NETWORK_ERROR:
+                console.log(
+                  "Fatal network error encountered, attempting to recover..."
+                );
+                hls.startLoad();
+                break;
+              case Hls.ErrorTypes.MEDIA_ERROR:
+                console.log(
+                  "Fatal media error encountered, attempting to recover..."
+                );
+                hls.recoverMediaError();
+                break;
+              default:
+                console.log(
+                  "Unrecoverable error encountered"
+                );
+                setError(
+                  `HLS error: ${data.details}`
+                );
+                hls.destroy();
+                break;
+            }
           }
         }
       );
@@ -1599,7 +1632,7 @@ export default function VideoPlayer({
     );
 
     setLoading(false);
-  }, [src]);
+  }, [src, drm]);
 
   /*
    * =========================================
@@ -1875,7 +1908,7 @@ export default function VideoPlayer({
         handleInput
       );
     };
-  });
+  }, []);
 
   /*
    * =========================================
@@ -1891,13 +1924,6 @@ export default function VideoPlayer({
 
   useEffect(() => {
     if (!ambientMode) {
-      setAmbientColors({
-        top: activeTheme.glow,
-        right: activeTheme.glow,
-        bottom: activeTheme.glow,
-        left: activeTheme.glow,
-      });
-
       if (
         ambientAnimationRef.current !==
         null
@@ -3320,7 +3346,7 @@ export default function VideoPlayer({
                   </md-menu-item>
 
                   {bookmarks.length === 0 && (
-                    <md-menu-item disabled>
+                    <md-menu-item>
                       <md-icon slot="start">
                         bookmark_border
                       </md-icon>

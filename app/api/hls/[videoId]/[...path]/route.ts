@@ -16,17 +16,24 @@ export async function GET(
   try {
     const { videoId, path: filePath } = await context.params;
 
+    if (!videoId || !filePath || filePath.length === 0) {
+      return new NextResponse("Bad Request", {
+        status: 400,
+      });
+    }
+
     const baseDir = path.resolve("temp");
+    const videoDir = path.resolve(baseDir, videoId);
     const requestedPath = path.resolve(
-      baseDir,
-      videoId,
+      videoDir,
       ...filePath
     );
 
     // Prevent path traversal.
     if (
-      requestedPath !== baseDir &&
-      !requestedPath.startsWith(`${baseDir}${path.sep}`)
+      path.basename(videoId) !== videoId ||
+      !videoDir.startsWith(`${baseDir}${path.sep}`) ||
+      !requestedPath.startsWith(`${videoDir}${path.sep}`)
     ) {
       return new NextResponse("Forbidden", {
         status: 403,
