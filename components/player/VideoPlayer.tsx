@@ -11,10 +11,19 @@ import Hls from "hls.js";
 
 import type { WidevineDrmConfig, DrmSecurityLevel } from "@/lib/video";
 
+export type PlayerVariant =
+  | "material3"
+  | "material2"
+  | "material1"
+  | "shadcn"
+  | "minimal"
+  | "liquidglass";
+
 type VideoPlayerProps = {
   src: string;
   storyboardSrc?: string;
   drm?: WidevineDrmConfig;
+  variant?: PlayerVariant;
 };
 
 type StoryboardCue = {
@@ -362,6 +371,7 @@ export default function VideoPlayer({
   src,
   storyboardSrc = src.replace(/master\.m3u8(?:\?.*)?$/, "storyboard.vtt"),
   drm,
+  variant = "material3",
 }: VideoPlayerProps) {
   /*
    * =========================================
@@ -2259,7 +2269,7 @@ export default function VideoPlayer({
   return (
     <div
       ref={playerRef}
-      className={`stream-player stream-player--viewport-fit ${
+      className={`stream-player stream-player--viewport-fit stream-player--variant-${variant} ${
         ambientMode
           ? "stream-player--ambient"
           : ""

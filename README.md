@@ -1,36 +1,208 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Stream Video Player
 
-## Getting Started
+An advanced, feature-rich, and secure HTML5/HLS video player component built for Modern React and Next.js applications. Features custom Material Design 3 controls, adaptive HLS bitrate streaming, Widevine DRM support, dynamic ambient lighting, customizable themes, WebVTT scrub previews, video telemetry metrics, and timestamp bookmarks.
 
-First, run the development server:
+---
+
+## 🚀 Features
+
+- **📺 Adaptive HLS Streaming**: Powered by `hls.js` with automatic quality switching, manual height selection (360p - 2160p+), and instant network bandwidth monitoring.
+- **🔒 DRM & Security Support**: Built-in support for Widevine DRM with hardware-backed (`L1`) or software-based (`L3`) decryption security levels.
+- **🎨 Themes & Custom Styling**:
+  - 7 preset Material themes (`pink`, `blue`, `purple`, `green`, `orange`, `red`, `cyan`).
+  - Custom color picker support to match any brand design system.
+  - YouTube-style **Ambient Glow Mode** sampling edge colors in real-time.
+- **🖼️ WebVTT Storyboard Previews**: Interactive thumbnail preview tooltip during timeline scrubbing.
+- **🔖 Timestamp Bookmarks**: Save, label, jump to, and delete favorite timestamps with persistent `localStorage` support.
+- **📊 Real-Time Video Metrics**: Monitor FPS, decoded/dropped frame counters, resolution, buffer length, and throughput speed in real-time.
+- **⌨️ Rich Keyboard Shortcuts**: Play/pause, seek, volume adjust, fullscreen, Picture-in-Picture, and zero-jump navigation.
+- **📱 Responsive & Viewport Fit**: Optimized 16:9 aspect ratio scaling with auto-fitting for mobile and desktop viewports.
+- **🎨 Design System Variants**: Pick from multiple UI designs out of the box (`material3`, `material2`, `material1`, `shadcn`, `minimal`, `liquidglass`).
+
+---
+
+## 📦 Installation & Setup
+
+To integrate this video player into your React or Next.js project using `npm`:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install hls.js @material/web @fontsource/material-symbols-rounded
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Next.js Client Component Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Ensure `@fontsource/material-symbols-rounded` CSS is imported in your global styles or layout:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```tsx
+// app/layout.tsx or pages/_app.tsx
+import "@fontsource/material-symbols-rounded";
+import "@/app/globals.css";
+```
 
-## Learn More
+Because the player uses DOM APIs and HLS Web Workers, import the component with client-side dynamic rendering in Next.js App Router:
 
-To learn more about Next.js, take a look at the following resources:
+```tsx
+"use client";
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+import dynamic from "next/dynamic";
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+const VideoPlayer = dynamic(
+  () => import("@/components/player/VideoPlayer"),
+  { ssr: false }
+);
 
-## Deploy on Vercel
+export default VideoPlayer;
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 💻 Usage & Integration Examples
+
+### 1. Standard HLS Playback
+
+```tsx
+import VideoPlayer from "@/components/player/VideoPlayerClient";
+
+export default function Page() {
+  return (
+    <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
+      <VideoPlayer
+        src="https://example.com/video/master.m3u8"
+        storyboardSrc="https://example.com/video/storyboard.vtt"
+      />
+    </div>
+  );
+}
+```
+
+### 2. UI Player Variants (Apple Liquid Glass, Material 1/2/3, Shadcn UI, Minimal)
+
+Choose the player aesthetic that matches your application design system using the `variant` prop:
+
+```tsx
+import VideoPlayer from "@/components/player/VideoPlayerClient";
+
+export default function VariantsDemoPage() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+      {/* Apple Liquid Glass Style */}
+      <VideoPlayer variant="liquidglass" src="https://example.com/video/master.m3u8" />
+
+      {/* Material 3 (Default) */}
+      <VideoPlayer variant="material3" src="https://example.com/video/master.m3u8" />
+
+      {/* Shadcn UI Style */}
+      <VideoPlayer variant="shadcn" src="https://example.com/video/master.m3u8" />
+
+      {/* Material 2 Style */}
+      <VideoPlayer variant="material2" src="https://example.com/video/master.m3u8" />
+
+      {/* Material 1 Classic Flat Style */}
+      <VideoPlayer variant="material1" src="https://example.com/video/master.m3u8" />
+
+      {/* Ultra Clean Minimal Style */}
+      <VideoPlayer variant="minimal" src="https://example.com/video/master.m3u8" />
+    </div>
+  );
+}
+```
+
+### 2. High-Security Widevine DRM Integration
+
+Secure video content playback using Widevine DRM configurations:
+
+```tsx
+import VideoPlayer from "@/components/player/VideoPlayerClient";
+
+export default function SecurePlayerPage() {
+  return (
+    <VideoPlayer
+      src="https://example.com/protected/master.m3u8"
+      drm={{
+        widevineLicenseUrl: "https://license-server.example.com/proxy",
+        widevineServerCertificateUrl: "https://license-server.example.com/cert.bin",
+        level: "L1", // Hardware secure ('L1') or software secure ('L3')
+      }}
+    />
+  );
+}
+```
+
+#### DRM Security Levels (`level`):
+- `"L1"`: Maps to `HW_SECURE_ALL` for hardware-enforced DRM decryption.
+- `"L3"`: Maps to `SW_SECURE_DECRYPTION` for software-level DRM decryption.
+- `"auto"`: Allows the browser and HLS engine to negotiate the highest supported security level.
+
+---
+
+## 🎨 Themes, Custom Colors & Styling
+
+The player includes built-in settings to easily customize theme colors or let end-users choose their preferred visual style:
+
+```tsx
+/* CSS Custom Properties supported by the player container */
+.stream-player {
+  --player-primary: #ff80ab;
+  --player-primary-container: #7d2949;
+  --player-on-primary: #ffd9e2;
+  --player-glow: rgba(255, 128, 171, 0.65);
+}
+```
+
+### Built-in Preset Themes
+
+Select preset themes directly from the in-player Settings menu:
+- 🌸 **Pink** (Default)
+- 🔵 **Blue**
+- 💜 **Purple**
+- 🟢 **Green**
+- 🟧 **Orange**
+- 🔴 **Red**
+- 🩵 **Cyan**
+- 🎨 **Custom Color**: Pick any hex color hex code (`#RRGGBB`) dynamically!
+
+---
+
+## ⌨️ Keyboard Shortcuts
+
+| Key | Action |
+| --- | --- |
+| `Space` / `K` | Toggle Play / Pause |
+| `M` | Toggle Mute |
+| `F` | Toggle Fullscreen |
+| `P` | Toggle Picture-in-Picture |
+| `←` / `→` | Seek backward / forward 5s (10s with `Shift`) |
+| `J` / `L` | Seek backward / forward 10s |
+| `↑` / `↓` | Volume Up / Down 5% |
+| `0` / `Home` | Jump to start of video |
+| `End` | Jump to end of video |
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+```text
+MIT License
+
+Copyright (c) 2025
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

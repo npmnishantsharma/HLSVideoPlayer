@@ -2,7 +2,10 @@
 
 import dynamic from "next/dynamic";
 
-const VideoPlayer = dynamic(
+import type { ComponentProps } from "react";
+import type VideoPlayerComponent from "./VideoPlayer";
+
+const VideoPlayer = dynamic<ComponentProps<typeof VideoPlayerComponent>>(
   () => import("./VideoPlayer"),
   {
     ssr: false,
