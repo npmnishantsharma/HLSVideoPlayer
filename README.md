@@ -17,7 +17,7 @@ An advanced, feature-rich, and secure HTML5/HLS video player component built for
 - **📊 Real-Time Video Metrics**: Monitor FPS, decoded/dropped frame counters, resolution, buffer length, and throughput speed in real-time.
 - **⌨️ Rich Keyboard Shortcuts**: Play/pause, seek, volume adjust, fullscreen, Picture-in-Picture, and zero-jump navigation.
 - **📱 Responsive & Viewport Fit**: Optimized 16:9 aspect ratio scaling with auto-fitting for mobile and desktop viewports.
-- **🎨 Design System Variants**: Pick from multiple UI designs out of the box (`material3`, `material2`, `material1`, `shadcn`, `minimal`).
+- **🎨 Design System Variants**: Pick from multiple UI designs out of the box (`material3`, `material2`, `material1`, `shadcn`, `minimal`, `liquidglass`).
 
 ---
 
@@ -75,7 +75,7 @@ export default function Page() {
 }
 ```
 
-### 2. UI Player Variants (Material 1, 2, 3, Shadcn UI, Minimal)
+### 2. UI Player Variants (Apple Liquid Glass, Material 1/2/3, Shadcn UI, Minimal)
 
 Choose the player aesthetic that matches your application design system using the `variant` prop:
 
@@ -85,6 +85,9 @@ import VideoPlayer from "@/components/player/VideoPlayerClient";
 export default function VariantsDemoPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+      {/* Apple Liquid Glass Style */}
+      <VideoPlayer variant="liquidglass" src="https://example.com/video/master.m3u8" />
+
       {/* Material 3 (Default) */}
       <VideoPlayer variant="material3" src="https://example.com/video/master.m3u8" />
 

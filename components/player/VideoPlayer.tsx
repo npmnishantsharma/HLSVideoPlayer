@@ -16,7 +16,8 @@ export type PlayerVariant =
   | "material2"
   | "material1"
   | "shadcn"
-  | "minimal";
+  | "minimal"
+  | "liquidglass";
 
 type VideoPlayerProps = {
   src: string;
