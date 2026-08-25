@@ -1017,3 +1017,110 @@ md-icon {
     display: none;
   }
 }
+
+/* ==========================================================================
+   PLAYER VARIANTS (Material 3, Material 2, Material 1, Shadcn UI, Minimal)
+   ========================================================================== */
+
+/* --- Material 3 (Default) --- */
+.stream-player--variant-material3 {
+  border-radius: 24px;
+}
+
+/* --- Material 2 --- */
+.stream-player--variant-material2 {
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.stream-player--variant-material2 .stream-player__overlay {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.4) 20%, transparent 60%);
+}
+
+.stream-player--variant-material2 .stream-player__controls {
+  padding-bottom: 6px;
+  background: rgba(33, 33, 33, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+.stream-player--variant-material2 .stream-player__progress {
+  bottom: 58px;
+}
+
+/* --- Material 1 --- */
+.stream-player--variant-material1 {
+  border-radius: 0px;
+  box-shadow: none;
+  border: 2px solid #333;
+}
+
+.stream-player--variant-material1 .stream-player__overlay {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.stream-player--variant-material1 .stream-player__controls {
+  background: #1e1e1e;
+  border-top: 1px solid #333;
+}
+
+.stream-player--variant-material1 .stream-player__progress {
+  bottom: 52px;
+  height: 6px;
+  border-radius: 0;
+}
+
+.stream-player--variant-material1 .stream-player__buffer-progress,
+.stream-player--variant-material1 .stream-player__current-progress {
+  border-radius: 0 !important;
+}
+
+/* --- Shadcn UI --- */
+.stream-player--variant-shadcn {
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #09090b;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
+}
+
+.stream-player--variant-shadcn .stream-player__overlay {
+  background: linear-gradient(to top, rgba(9, 9, 11, 0.98) 0%, rgba(9, 9, 11, 0.6) 15%, transparent 45%);
+}
+
+.stream-player--variant-shadcn .stream-player__controls {
+  padding: 8px 16px 12px;
+  gap: 8px;
+  background: rgba(9, 9, 11, 0.75);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stream-player--variant-shadcn .stream-player__progress {
+  bottom: 58px;
+  height: 4px;
+}
+
+.stream-player--variant-shadcn .stream-player__time {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  color: #a1a1aa;
+}
+
+/* --- Minimal --- */
+.stream-player--variant-minimal {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.stream-player--variant-minimal .stream-player__overlay {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, transparent 40%);
+}
+
+.stream-player--variant-minimal .stream-player__controls {
+  padding: 4px 8px 8px;
+  background: transparent;
+}
+
+.stream-player--variant-minimal .stream-player__progress {
+  bottom: 50px;
+  height: 3px;
+}

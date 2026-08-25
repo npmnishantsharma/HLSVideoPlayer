@@ -17,6 +17,7 @@ An advanced, feature-rich, and secure HTML5/HLS video player component built for
 - **📊 Real-Time Video Metrics**: Monitor FPS, decoded/dropped frame counters, resolution, buffer length, and throughput speed in real-time.
 - **⌨️ Rich Keyboard Shortcuts**: Play/pause, seek, volume adjust, fullscreen, Picture-in-Picture, and zero-jump navigation.
 - **📱 Responsive & Viewport Fit**: Optimized 16:9 aspect ratio scaling with auto-fitting for mobile and desktop viewports.
+- **🎨 Design System Variants**: Pick from multiple UI designs out of the box (`material3`, `material2`, `material1`, `shadcn`, `minimal`).
 
 ---
 
@@ -69,6 +70,35 @@ export default function Page() {
         src="https://example.com/video/master.m3u8"
         storyboardSrc="https://example.com/video/storyboard.vtt"
       />
+    </div>
+  );
+}
+```
+
+### 2. UI Player Variants (Material 1, 2, 3, Shadcn UI, Minimal)
+
+Choose the player aesthetic that matches your application design system using the `variant` prop:
+
+```tsx
+import VideoPlayer from "@/components/player/VideoPlayerClient";
+
+export default function VariantsDemoPage() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+      {/* Material 3 (Default) */}
+      <VideoPlayer variant="material3" src="https://example.com/video/master.m3u8" />
+
+      {/* Shadcn UI Style */}
+      <VideoPlayer variant="shadcn" src="https://example.com/video/master.m3u8" />
+
+      {/* Material 2 Style */}
+      <VideoPlayer variant="material2" src="https://example.com/video/master.m3u8" />
+
+      {/* Material 1 Classic Flat Style */}
+      <VideoPlayer variant="material1" src="https://example.com/video/master.m3u8" />
+
+      {/* Ultra Clean Minimal Style */}
+      <VideoPlayer variant="minimal" src="https://example.com/video/master.m3u8" />
     </div>
   );
 }
