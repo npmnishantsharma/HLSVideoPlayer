@@ -2500,6 +2500,7 @@ export default function VideoPlayer({
           <div className="stream-player__center-play">
             <md-icon-button
               aria-label="Play video"
+              title="Play (k)"
               onClick={
                 togglePlay
               }
@@ -2685,6 +2686,11 @@ export default function VideoPlayer({
                   ? "Pause"
                   : "Play"
               }
+              title={
+                playing
+                  ? "Pause (k)"
+                  : "Play (k)"
+              }
               onClick={
                 togglePlay
               }
@@ -2714,6 +2720,11 @@ export default function VideoPlayer({
                   muted
                     ? "Unmute"
                     : "Mute"
+                }
+                title={
+                  muted || volume === 0
+                    ? "Unmute (m)"
+                    : "Mute (m)"
                 }
                 onClick={
                   toggleMute
@@ -3286,6 +3297,7 @@ export default function VideoPlayer({
 
             <md-icon-button
               aria-label="Picture in picture"
+              title="Picture in picture (p)"
               onClick={
                 togglePiP
               }
@@ -3296,6 +3308,7 @@ export default function VideoPlayer({
             </md-icon-button>
             <md-icon-button
               aria-label="Fullscreen"
+              title="Fullscreen (f)"
               onClick={
                 toggleFullscreen
               }
