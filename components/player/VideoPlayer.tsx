@@ -216,7 +216,37 @@ const parseStoryboardVtt = (
         width: Number(match[4]),
         height: Number(match[5]),
       }];
-    });
+    })
+    .sort((a, b) => a.start - b.start);
+};
+
+const findStoryboardCue = (
+  cues: StoryboardCue[],
+  time: number
+): StoryboardCue | undefined => {
+  if (cues.length === 0) {
+    return undefined;
+  }
+
+  let left = 0;
+  let right = cues.length - 1;
+  let match: StoryboardCue | undefined;
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    const cue = cues[mid];
+
+    if (time >= cue.start && time < cue.end) {
+      match = cue;
+      break;
+    } else if (time < cue.start) {
+      right = mid - 1;
+    } else {
+      left = mid + 1;
+    }
+  }
+
+  return match ?? cues.at(-1);
 };
 
 const getStoredSettings = (): StoredSettings => {
@@ -854,9 +884,7 @@ export default function VideoPlayer({
       Math.max(0, (clientX - rect.left) / rect.width)
     );
     const time = position * duration;
-    const cue = storyboardCues.find(
-      (item) => time >= item.start && time < item.end
-    ) ?? storyboardCues.at(-1);
+    const cue = findStoryboardCue(storyboardCues, time);
 
     setScrubPreview(
       cue
@@ -876,9 +904,7 @@ export default function VideoPlayer({
       1,
       Math.max(0, time / duration)
     );
-    const cue = storyboardCues.find(
-      (item) => time >= item.start && time < item.end
-    ) ?? storyboardCues.at(-1);
+    const cue = findStoryboardCue(storyboardCues, time);
 
     setScrubPreview(
       cue
