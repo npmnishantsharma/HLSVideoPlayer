@@ -29,16 +29,37 @@ export async function GET(
       ...filePath
     );
 
-    if (
-      path.basename(videoId) !== videoId ||
-      !videoDir.startsWith(`${baseDir}${path.sep}`) ||
-      !requestedPath.startsWith(`${videoDir}${path.sep}`)
-    ) {
+    // Prevent path traversal and symlink attacks.
+    let isSafe = false;
+
+    try {
+      const realRequestedPath = await fs.realpath(requestedPath);
+      const realVideoDir = await fs.realpath(videoDir);
+
+      if (
+        path.basename(videoId) === videoId &&
+        realVideoDir.startsWith(await fs.realpath(baseDir) + path.sep) &&
+        realRequestedPath.startsWith(realVideoDir + path.sep)
+      ) {
+        isSafe = true;
+      }
+    } catch {
+      // If the file doesn't exist yet, we still check the un-symlinked path
+      const normalizedVideoDir = path.normalize(videoDir);
+      if (
+        path.basename(videoId) === videoId &&
+        videoDir.startsWith(baseDir + path.sep) &&
+        requestedPath.startsWith(normalizedVideoDir + path.sep)
+      ) {
+        isSafe = true;
+      }
+    }
+
+    if (!isSafe) {
       return new NextResponse("Forbidden", {
         status: 403,
       });
     }
-
     const file = await fs.readFile(requestedPath);
     const extension = path.extname(
       requestedPath
