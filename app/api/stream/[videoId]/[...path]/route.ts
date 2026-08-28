@@ -29,10 +29,25 @@ export async function GET(
       ...filePath
     );
 
+    let realBaseDir: string;
+    let realVideoDir: string;
+    let realRequestedPath: string;
+    try {
+      realBaseDir = await fs.realpath(baseDir);
+      realVideoDir = await fs.realpath(videoDir);
+      realRequestedPath = await fs.realpath(requestedPath);
+    } catch {
+      // If the file does not exist, realpath will throw an error.
+      // Since this is a file reading endpoint, we can return 404.
+      return new NextResponse("File not found", {
+        status: 404,
+      });
+    }
+
     if (
       path.basename(videoId) !== videoId ||
-      !videoDir.startsWith(`${baseDir}${path.sep}`) ||
-      !requestedPath.startsWith(`${videoDir}${path.sep}`)
+      !realVideoDir.startsWith(`${realBaseDir}${path.sep}`) ||
+      !realRequestedPath.startsWith(`${realVideoDir}${path.sep}`)
     ) {
       return new NextResponse("Forbidden", {
         status: 403,
