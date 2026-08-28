@@ -21,7 +21,7 @@ const VideoPlayer = dynamic<ComponentProps<typeof VideoPlayerComponent>>(
           height: "100vh",
         }}
       >
-        <md-circular-progress indeterminate />
+        <md-circular-progress aria-label="Loading video player" indeterminate />
       </div>
     ),
   }
