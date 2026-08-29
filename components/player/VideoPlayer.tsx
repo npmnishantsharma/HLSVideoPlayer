@@ -2432,6 +2432,7 @@ export default function VideoPlayer({
       {loading && !error && (
         <div className="stream-player__loading">
           <md-circular-progress
+            aria-label="Loading video"
             indeterminate
           />
         </div>
@@ -2525,6 +2526,7 @@ export default function VideoPlayer({
           <div className="stream-player__progress">
             {/* BUFFER */}
             <md-linear-progress
+              aria-hidden="true"
               className="stream-player__buffer-progress"
               value={
                 duration > 0
@@ -2539,6 +2541,7 @@ export default function VideoPlayer({
 
             {/* CURRENT PLAYBACK */}
             <md-linear-progress
+              aria-hidden="true"
               className="stream-player__current-progress"
               value={
                 duration > 0
@@ -2744,6 +2747,7 @@ export default function VideoPlayer({
                 className="stream-player__volume-control"
               >
                 <md-slider
+                  aria-label="Volume"
                   className="stream-player__volume-slider"
                   ref={
                     volumeRef as React.RefObject<HTMLElement>
