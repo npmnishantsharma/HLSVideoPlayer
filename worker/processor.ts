@@ -290,6 +290,11 @@ async function processQuality(
 }
 
 async function processVideo(input: string, videoId: string) {
+  // Security Fix: Prevent path traversal in videoId to avoid arbitrary file deletion
+  if (!/^[a-zA-Z0-9_-]+$/.test(videoId)) {
+    throw new Error("Invalid videoId format. Only alphanumeric characters, dashes, and underscores are allowed.");
+  }
+
   const info = await getVideoInfo(input);
 
   console.log("\nVideo information:");
