@@ -2,6 +2,7 @@
 
 import {
   useCallback,
+  useMemo,
   useEffect,
   useRef,
   useState,
@@ -2192,11 +2193,16 @@ export default function VideoPlayer({
    * =========================================
    */
 
-  const sortedQualities =
-    [...qualities].sort(
+  const sortedQualities = useMemo(() => {
+    // ⚡ Bolt: Memoize sortedQualities to prevent re-sorting on every frame
+    // Since currentTime updates frequently during playback, the component
+    // re-renders constantly. Sorting the qualities array on every render
+    // is unnecessary overhead.
+    return [...qualities].sort(
       (a, b) =>
         b.height - a.height
     );
+  }, [qualities]);
 
   /*
    * =========================================
