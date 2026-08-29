@@ -42,13 +42,6 @@ type ScrubPreview = {
   position: number;
 };
 
-type AmbientColors = {
-  top: string;
-  right: string;
-  bottom: string;
-  left: string;
-};
-
 type Quality = {
   index: number;
   height: number;
@@ -545,14 +538,6 @@ export default function VideoPlayer({
 
   const [showMetrics, setShowMetrics] =
     useState(storedSettings.showMetrics);
-
-  const [ambientColors, setAmbientColors] =
-  useState<AmbientColors>({
-    top: "rgb(255, 128, 171)",
-    right: "rgb(255, 128, 171)",
-    bottom: "rgb(255, 128, 171)",
-    left: "rgb(255, 128, 171)",
-  });
 
   /*
    * =========================================
@@ -1839,7 +1824,7 @@ export default function VideoPlayer({
 
     let lastSample = 0;
 
-    let previous: AmbientColors = {
+    let previous = {
       top: activeTheme.glow,
       right: activeTheme.glow,
       bottom: activeTheme.glow,
@@ -1989,7 +1974,7 @@ export default function VideoPlayer({
               22
             );
 
-            const next: AmbientColors = {
+            const next = {
               top: toRgb(
                 smooth(
                   parseRgb(previous.top),
@@ -2017,7 +2002,17 @@ export default function VideoPlayer({
             };
 
             previous = next;
-            setAmbientColors(next);
+
+            // ⚡ Bolt Performance Optimization:
+            // High-frequency visual updates in this React application (e.g., ambient video lighting)
+            // use direct DOM mutations (`ref.current.style.setProperty`) instead of React state
+            // to avoid CPU-intensive full-component re-renders ~8 times per second.
+            if (playerRef.current) {
+              playerRef.current.style.setProperty('--ambient-top', next.top);
+              playerRef.current.style.setProperty('--ambient-right', next.right);
+              playerRef.current.style.setProperty('--ambient-bottom', next.bottom);
+              playerRef.current.style.setProperty('--ambient-left', next.left);
+            }
           } catch {
             /*
              * Canvas/CORS fallback.
@@ -2032,7 +2027,12 @@ export default function VideoPlayer({
               left: fallback,
             };
 
-            setAmbientColors(previous);
+            if (playerRef.current) {
+              playerRef.current.style.setProperty('--ambient-top', previous.top);
+              playerRef.current.style.setProperty('--ambient-right', previous.right);
+              playerRef.current.style.setProperty('--ambient-bottom', previous.bottom);
+              playerRef.current.style.setProperty('--ambient-left', previous.left);
+            }
           }
         }
       }
@@ -2043,12 +2043,12 @@ export default function VideoPlayer({
         );
     };
 
-    setAmbientColors({
-      top: activeTheme.glow,
-      right: activeTheme.glow,
-      bottom: activeTheme.glow,
-      left: activeTheme.glow,
-    });
+    if (playerRef.current) {
+      playerRef.current.style.setProperty('--ambient-top', activeTheme.glow);
+      playerRef.current.style.setProperty('--ambient-right', activeTheme.glow);
+      playerRef.current.style.setProperty('--ambient-bottom', activeTheme.glow);
+      playerRef.current.style.setProperty('--ambient-left', activeTheme.glow);
+    }
 
     ambientAnimationRef.current =
       requestAnimationFrame(
@@ -2315,16 +2315,16 @@ export default function VideoPlayer({
             activeTheme.glow,
 
           "--ambient-top":
-            ambientColors.top,
+            activeTheme.glow,
 
           "--ambient-right":
-            ambientColors.right,
+            activeTheme.glow,
 
           "--ambient-bottom":
-            ambientColors.bottom,
+            activeTheme.glow,
 
           "--ambient-left":
-            ambientColors.left,
+            activeTheme.glow,
         } as React.CSSProperties
       }
     >
