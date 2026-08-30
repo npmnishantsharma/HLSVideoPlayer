@@ -5,6 +5,7 @@ import {
   useEffect,
   useRef,
   useState,
+  useMemo,
 } from "react";
 
 import Hls from "hls.js";
@@ -2192,11 +2193,12 @@ export default function VideoPlayer({
    * =========================================
    */
 
-  const sortedQualities =
-    [...qualities].sort(
+  const sortedQualities = useMemo(() => {
+    return [...qualities].sort(
       (a, b) =>
         b.height - a.height
     );
+  }, [qualities]);
 
   /*
    * =========================================
