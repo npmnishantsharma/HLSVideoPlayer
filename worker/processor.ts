@@ -362,6 +362,11 @@ if (!input) {
   process.exit(1);
 }
 
+if (!/^[a-zA-Z0-9_-]+$/.test(videoId)) {
+  console.error("Invalid videoId. Only alphanumeric, dashes, and underscores are allowed.");
+  process.exit(1);
+}
+
 processVideo(input, videoId).catch((error) => {
   console.error("\nProcessing failed:");
   console.error(error);
