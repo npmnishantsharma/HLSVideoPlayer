@@ -354,6 +354,13 @@ async function processVideo(input: string, videoId: string) {
 const input = process.argv[2];
 const videoId = process.argv[3] ?? "test-video";
 
+if (!/^[a-zA-Z0-9_-]+$/.test(videoId)) {
+  console.error(
+    "Invalid videoId. Must contain only alphanumeric characters, dashes, and underscores."
+  );
+  process.exit(1);
+}
+
 if (!input) {
   console.error(
     "Usage: npx tsx worker/processor.ts <input.mp4> <video-id>"
