@@ -362,6 +362,16 @@ if (!input) {
   process.exit(1);
 }
 
+// Ensure videoId is safe to use as a directory name to prevent path traversal
+// and arbitrary file deletion during the fs.rm operation.
+if (!/^[a-zA-Z0-9_-]+$/.test(videoId)) {
+  console.error(
+    "Error: Invalid video-id. Must only contain alphanumeric characters, dashes, and underscores."
+  );
+
+  process.exit(1);
+}
+
 processVideo(input, videoId).catch((error) => {
   console.error("\nProcessing failed:");
   console.error(error);
