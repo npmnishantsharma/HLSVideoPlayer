@@ -5,6 +5,7 @@ import {
   useEffect,
   useRef,
   useState,
+  useMemo,
 } from "react";
 
 import Hls from "hls.js";
@@ -2192,11 +2193,17 @@ export default function VideoPlayer({
    * =========================================
    */
 
-  const sortedQualities =
-    [...qualities].sort(
+  // ⚡ Bolt: Memoize the sorted qualities array.
+  // The VideoPlayer component re-renders multiple times per second
+  // due to `currentTime` updates during playback.
+  // We wrap this expensive array copy and sort in a useMemo hook
+  // to avoid re-calculating it on every render, preventing high CPU usage.
+  const sortedQualities = useMemo(() => {
+    return [...qualities].sort(
       (a, b) =>
         b.height - a.height
     );
+  }, [qualities]);
 
   /*
    * =========================================
