@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -2192,11 +2193,13 @@ export default function VideoPlayer({
    * =========================================
    */
 
-  const sortedQualities =
-    [...qualities].sort(
-      (a, b) =>
-        b.height - a.height
-    );
+  // ⚡ Bolt Performance Optimization:
+  // The `VideoPlayer` component re-renders multiple times per second during playback
+  // due to `currentTime` state updates. We memoize this array sort so it only
+  // re-calculates when the `qualities` array actually changes, saving CPU cycles.
+  const sortedQualities = useMemo(() => {
+    return [...qualities].sort((a, b) => b.height - a.height);
+  }, [qualities]);
 
   /*
    * =========================================
