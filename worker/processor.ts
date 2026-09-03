@@ -290,6 +290,12 @@ async function processQuality(
 }
 
 async function processVideo(input: string, videoId: string) {
+  if (!/^[a-zA-Z0-9_-]+$/.test(videoId)) {
+    throw new Error(
+      "Invalid videoId. Only alphanumeric characters, dashes, and underscores are allowed."
+    );
+  }
+
   const info = await getVideoInfo(input);
 
   console.log("\nVideo information:");

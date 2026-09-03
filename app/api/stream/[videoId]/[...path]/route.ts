@@ -45,7 +45,7 @@ export async function GET(
     }
 
     if (
-      path.basename(videoId) !== videoId ||
+      !/^[a-zA-Z0-9_-]+$/.test(videoId) ||
       !realVideoDir.startsWith(`${realBaseDir}${path.sep}`) ||
       !realRequestedPath.startsWith(`${realVideoDir}${path.sep}`)
     ) {
