@@ -2796,6 +2796,7 @@ export default function VideoPlayer({
             <md-icon-button
               id="player-settings-button"
               aria-label="Settings"
+              title="Settings"
               onClick={() => {
                 setSettingsPage("root");
                 settingsMenuRef.current?.show();
@@ -3280,6 +3281,7 @@ export default function VideoPlayer({
                       <md-icon-button
                         slot="end"
                         aria-label={`Remove bookmark at ${formatTime(bookmark.time)}`}
+                        title="Remove bookmark"
                         onClick={(event) => {
                           event.stopPropagation();
                           removeBookmark(bookmark.id);
