@@ -44,8 +44,9 @@ export async function GET(
       });
     }
 
+    const isValidVideoId = /^[a-zA-Z0-9_-]+$/.test(videoId);
     if (
-      path.basename(videoId) !== videoId ||
+      !isValidVideoId ||
       !realVideoDir.startsWith(`${realBaseDir}${path.sep}`) ||
       !realRequestedPath.startsWith(`${realVideoDir}${path.sep}`)
     ) {

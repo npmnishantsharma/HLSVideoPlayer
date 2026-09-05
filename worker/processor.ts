@@ -290,6 +290,10 @@ async function processQuality(
 }
 
 async function processVideo(input: string, videoId: string) {
+  if (!/^[a-zA-Z0-9_-]+$/.test(videoId)) {
+    throw new Error("Invalid videoId format");
+  }
+
   const info = await getVideoInfo(input);
 
   console.log("\nVideo information:");
