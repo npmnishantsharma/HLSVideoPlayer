@@ -4,3 +4,6 @@
 ## 2024-06-13 - Direct DOM Mutation for High-Frequency Visuals
 **Learning:** In highly complex React components (like `VideoPlayer` with ambient mode enabled), updating state very frequently (e.g., 8 times per second for color shifts) triggers massive full-component re-renders that lead to significant CPU load and potential jank.
 **Action:** For high-frequency visual updates that only affect CSS properties, use direct DOM mutation (`ref.current.style.setProperty`) instead of React `useState` to avoid unnecessary React rendering cycles, keeping CPU usage low while maintaining visually identical results.
+## 2024-05-18 - VideoPlayer re-renders
+**Learning:** The `VideoPlayer` component re-renders multiple times per second during playback due to `currentTime` state updates triggered by the `timeupdate` event. This makes any un-memoized array manipulations (like sorting or filtering) within its render body a significant CPU bottleneck.
+**Action:** Always wrap expensive data transformations in `useMemo` when working inside components that listen to high-frequency events like `timeupdate`.
